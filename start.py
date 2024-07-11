@@ -1,8 +1,14 @@
 import os
+import sys
 
 import psutil
 from uvicorn import run
 from dotenv import load_dotenv
+import server
+
+
+if sys.platform == "win32":
+    os.system('chcp 65001')
 
 if __name__ == "__main__":
     load_dotenv()
