@@ -1,0 +1,4 @@
+model/briaai/RMBG-1.4/model.pth filter=lfs diff=lfs merge=lfs -text
+model/briaai/RMBG-1.4/model.safetensors filter=lfs diff=lfs merge=lfs -text
+model/briaai/RMBG-1.4/pytorch_model.bin filter=lfs diff=lfs merge=lfs -text
+model/briaai/RMBG-1.4/onnx/model.onnx filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "esnext",             // 编译的目标版本
+    "module": "esnext",             // 模块系统
+    "moduleResolution": "node",     // 模块解析策略
+    "strict": true,                 // 启用所有严格类型检查选项
+    "jsx": "preserve",              // 保留 JSX 以供进一步处理
+    "sourceMap": true,              // 生成 .map 文件
+    "resolveJsonModule": true,      // 允许导入 .json 文件
+    "esModuleInterop": true,        // 允许默认导入
+    "skipLibCheck": true,           // 跳过库文件的类型检查
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,  // 强制在文件名中保持一致的大小写
+    "baseUrl": ".",                 // 基本路径，用于解析非相对模块名称
+    "paths": {
+      "@/*": ["src/*"]              // 使用 @ 符号作为 src 目录的别名
+    },
+    "types": ["node"],               // 包含 node 类型
+    "typeRoots": ["./node_modules/@types"],
+  },
+  "include": ["src"],               // 包含 src 目录中的所有文件
+  "exclude": ["node_modules"]       // 排除 node_modules 目录
+}

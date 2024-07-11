@@ -1,0 +1,24 @@
+{
+    "per_channel": false,
+    "reduce_range": false,
+    "per_model_config": {
+        "model": {
+            "op_types": [
+                "Concat",
+                "MaxPool",
+                "Resize",
+                "Conv",
+                "Unsqueeze",
+                "Cast",
+                "Shape",
+                "Relu",
+                "Sigmoid",
+                "Gather",
+                "Constant",
+                "Slice",
+                "Add"
+            ],
+            "weight_type": "QUInt8"
+        }
+    }
+}
