@@ -1,18 +1,19 @@
 import base64
 import os
+import random
+import string
 from io import BytesIO
 
-import requests
-from transformers import AutoModelForImageSegmentation
-from torchvision.transforms.functional import normalize
-
 import numpy as np
+import requests
 import torch
 import torch.nn.functional as F
-import skimage.io as io
 from PIL import Image, ImageDraw
-from .logger import get_logger
+from torchvision.transforms.functional import normalize
+from transformers import AutoModelForImageSegmentation
+
 from .dto import RemoveBgDTO
+from .logger import get_logger
 
 model = AutoModelForImageSegmentation.from_pretrained(os.path.join(os.getcwd(), 'model', 'briaai', 'RMBG-1.4'),
                                                       trust_remote_code=True)
@@ -46,6 +47,9 @@ def _read_image(dto: RemoveBgDTO) -> Image.Image | str:
 def _crop_image_polygon_area(dto: RemoveBgDTO, image: Image.Image) -> Image.Image:
     if len(dto.selectPolygon) < 3:
         return image
+    if len(dto.selectPolygon) < 3:
+        return image
+
     # 根据缩放比例计算真实的多边形点的坐标
     image_width, image_height = image.size
     editor_width, editor_height = dto.editorSize
@@ -72,13 +76,23 @@ def _crop_image_polygon_area(dto: RemoveBgDTO, image: Image.Image) -> Image.Imag
     mask = Image.new("L", image.size, 0)
     # 使用ImageDraw在mask上绘制多边形，255表示完全不透明
     ImageDraw.Draw(mask).polygon(real_points, outline=255, fill=255)
-    # 将mask转换为透明度通道，其中0表示完全透明，255表示完全不透明
-    image.putalpha(mask)
-    # 使用mask来剪裁多边形区域
-    # 计算多边形的边界框
+
+    # 创建一个白色背景图像
+    white_bg = Image.new("RGB", image.size, (255, 255, 255))
+
+    # 将原图像与mask合并，使未选中部分透明
+    image_with_alpha = image.convert("RGBA")
+    image_with_alpha.putalpha(mask)
+
+    # 将裁剪后的图像粘贴到白色背景图像上
+    white_bg.paste(image_with_alpha, (0, 0), image_with_alpha)
+
+    # 使用mask来计算多边形的边界框
     x_min, y_min, x_max, y_max = mask.getbbox()
+
     # 根据边界框裁剪图像
-    cropped_image = image.crop((x_min, y_min, x_max, y_max))
+    cropped_image = white_bg.crop((x_min, y_min, x_max, y_max))
+
     return cropped_image
 
 
@@ -104,18 +118,25 @@ def _post_process_image(tensor_ret: torch.Tensor, im_size: list) -> np.ndarray:
 
 
 def _remove_background(input_image: Image.Image) -> Image:
+    # 去除alpha通道
+    input_image = input_image.convert("RGB")
     image_array = np.array(input_image)
-    orig_im_size = image_array.shape[0:2]
-    image = _preprocess_image(image_array, [1024, 1024]).to(device)
+    # 转换为 (height, width)
+    image_size = (input_image.size[1], input_image.size[0])
+    pre_precess = _preprocess_image(image_array, [1024, 1024]).to(device)
 
     # inference
-    result = model(image)  # tuple 2*6
+    result = model(pre_precess)  # tuple 2*6
 
     # post process
-    result_image = _post_process_image(result[0][0], list(orig_im_size))
+    post_precess = _post_process_image(result[0][0], list(image_size))
 
     # save result
-    return Image.fromarray(result_image)
+    pil_im = Image.fromarray(post_precess)
+    no_bg_image = Image.new("RGBA", pil_im.size, (0, 0, 0, 0))
+    no_bg_image.paste(input_image, mask=pil_im)
+
+    return no_bg_image
 
 
 def _save_as_base64(image: Image.Image) -> str:
@@ -136,6 +157,23 @@ def _save_as_bytes(image: Image.Image) -> bytes:
     return img_byte_array
 
 
+def _generate_random_filename(extension: str) -> str:
+    # 生成一个随机字符串
+    random_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+    # 返回带有指定扩展名的文件名
+    return f"{random_str}.{extension}"
+
+
+def _save_image_with_random_filename(img: Image.Image) -> str:
+    # 生成随机文件名
+    filename = _generate_random_filename('png')
+    # 生成完整文件路径
+    filepath = os.path.join(os.getcwd(), filename)
+    # 保存图像为 PNG 格式
+    img.save(filepath, 'PNG')
+    return filepath
+
+
 def process(dto: RemoveBgDTO) -> (int, str, bytes | str):
     code, msg = dto.check()
     if code != 0:
@@ -145,8 +183,11 @@ def process(dto: RemoveBgDTO) -> (int, str, bytes | str):
     if isinstance(orig_im, str):
         return 200, orig_im, ''
     crop_im = _crop_image_polygon_area(dto, orig_im)
+    # crop_im_path = _save_image_with_random_filename(crop_im)
+    # print(f">>>临时文件：{crop_im_path}")
     result = _remove_background(crop_im)
     if dto.responseFormat == 0:
         return 0, '', _save_as_base64(result)
     else:
         return 0, '', _save_as_bytes(result)
+
