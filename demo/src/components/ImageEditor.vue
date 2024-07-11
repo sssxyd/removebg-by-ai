@@ -13,7 +13,7 @@
         <img v-if="status === EditorStatus.Ready" src="@/assets/images/upload_image.png" @click="triggerInput" style="width: 700px;">
         <div v-if="imageBase64 && status !== EditorStatus.Ready" style="position: relative; width: 700px;">
             <img ref="displayImgRef" :src="imageBase64" style="width: 700px;" @load="syncCanvas">
-            <DrawBoardCanvas ref="drawBoardRef" :width="editorSize.width" :height="editorSize.height"></DrawBoardCanvas>
+            <DrawRectCanvas ref="drawBoardRef" :width="editorSize.width" :height="editorSize.height"></DrawRectCanvas>
         </div>    
         <input type="file" ref="fileInputRef" @change="handleFileChange" style="display: none;" accept="image/*">
         <canvas ref="fullImageRef" style="display: none;"></canvas>
@@ -22,7 +22,7 @@
   
 <script lang="ts" setup>
 import { onMounted, reactive, ref, watch } from 'vue';
-import DrawBoardCanvas from './DrawBoardCanvas.vue';
+import DrawRectCanvas from './DrawRectCanvas.vue';
 
 enum EditorStatus {
     Ready = 0,
@@ -33,7 +33,7 @@ enum EditorStatus {
 
 const imageBase64 = ref<string | null>(null);
 const displayImgRef = ref<HTMLImageElement | null>(null);
-const drawBoardRef = ref<InstanceType<typeof DrawBoardCanvas> | null>(null);
+const drawBoardRef = ref<InstanceType<typeof DrawRectCanvas> | null>(null);
 const fullImageRef = ref<HTMLCanvasElement | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const status = ref<EditorStatus>(EditorStatus.Ready);
@@ -164,12 +164,65 @@ const removebg = () => {
     })
 }
 
-const downloadPng = () => {
-    // TODO: 实现下载PNG功能
+const stringToRandomNumber = (str: string) => {
+  // 将字符串转换为一个整数值
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0; // 将结果转换为32位整数
+  }
+
+  // 使用这个整数值作为种子生成一个伪随机数
+  const seed = Math.abs(hash);
+  const random = (seed * 9301 + 49297) % 233280;
+  return random / 233280;
 }
 
-const sharePng = () => {
-    // TODO: 实现分享PNG功能
+const downloadPng = () => {
+    if(imageBase64.value){
+        const link: HTMLAnchorElement = document.createElement('a');
+        link.href = imageBase64.value
+        link.download = stringToRandomNumber(imageBase64.value) + '.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
+const base64ToBlob = (base64: string) => {
+    const byteString = atob(base64.split(',')[1]);
+    const mimeString = base64.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+} 
+
+const sharePng = async () => {
+    if(imageBase64.value){
+        const blob = base64ToBlob(imageBase64.value);
+        const filesArray = [
+            new File([blob], 'image.png', {
+            type: blob.type,
+            }),
+        ];
+
+        if (navigator.share) {
+            try {
+            await navigator.share({
+                files: filesArray,
+            });
+            console.log('分享成功');
+            } catch (error) {
+            console.error('分享失败', error);
+            }
+        } else {
+            alert('Web Share API Not Supported');
+        }
+    }
+
 }
   
 onMounted(() => {
