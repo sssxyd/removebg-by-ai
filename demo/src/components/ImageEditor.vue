@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="editor-container">
         <div class="button-container">
           <i v-if="status === EditorStatus.Edit" class="iconfont icon-touming" @click="removebg"></i>
           <i v-if="status === EditorStatus.Edit" class="iconfont icon-shunshizhenxuanzhuan" @click="rotateImage"></i>
@@ -10,9 +10,9 @@
 
           <i v-if="status === EditorStatus.Edit || status === EditorStatus.Show" class="iconfont icon-shanchu"  @click="deleteImage"></i>
         </div>          
-        <img v-if="status === EditorStatus.Ready" src="@/assets/images/upload_image.png" @click="triggerInput" style="width: 700px;">
-        <div v-if="imageBase64 && status !== EditorStatus.Ready" style="position: relative; width: 700px;">
-            <img ref="displayImgRef" :src="imageBase64" style="width: 700px;" @load="syncCanvas">
+        <img v-if="status === EditorStatus.Ready" src="@/assets/images/upload_image.png" @click="triggerInput">
+        <div v-if="imageBase64 && status !== EditorStatus.Ready" class="canvas-container">
+            <img ref="displayImgRef" :src="imageBase64" @load="syncCanvas">
             <DrawRectCanvas ref="drawBoardRef" :width="editorSize.width" :height="editorSize.height"></DrawRectCanvas>
         </div>    
         <input type="file" ref="fileInputRef" @change="handleFileChange" style="display: none;" accept="image/*">
@@ -31,6 +31,7 @@ enum EditorStatus {
     Show = 3
 }
 
+const isLoading = ref<boolean>(false)
 const imageBase64 = ref<string | null>(null);
 const displayImgRef = ref<HTMLImageElement | null>(null);
 const drawBoardRef = ref<InstanceType<typeof DrawRectCanvas> | null>(null);
@@ -103,6 +104,7 @@ const rotateImage = () => {
     if (ctx === null) {
         return;
     }
+    isLoading.value = true
     const img = new Image();
     img.src = canvas.toDataURL();
     img.onload = () => {
@@ -117,6 +119,7 @@ const rotateImage = () => {
         ctx.rotate((-90 * Math.PI) / 180);
         ctx.translate(-canvas.width / 2, -canvas.height / 2);
         imageBase64.value = canvas.toDataURL();
+        isLoading.value = false
     };
 }
 
@@ -125,6 +128,7 @@ const clear = () => {
 }
 
 const removebg = () => {
+    isLoading.value = true
     const polygonPoints = drawBoardRef.value?.confirm() || []
     const points:Array<Array<number>> = []
     polygonPoints.forEach(point => {
@@ -151,15 +155,21 @@ const removebg = () => {
                 }
                 else{
                     imageBase64.value = apiResult.result
-                    status.value = EditorStatus.Show
+                    status.value = EditorStatus.Show  
                 }
+                isLoading.value = false;
+            }).catch(error => {
+                isLoading.value = false;
+                console.log(error)
             })
         }
         else{
+            isLoading.value = false;
             console.error(resp.status + ":" + resp.statusText)
         }
     })
     .catch(error => {
+        isLoading.value = false;
         console.log(error)
     })
 }
@@ -240,12 +250,18 @@ watch(status, (newStatus) => {
   
 <style lang="css" scoped>
 img {
-  user-select: none; /* 禁用用户选择 */
-  -webkit-user-drag: none; /* 禁用图像拖动 */
+    width: 700px;
+    user-select: none; /* 禁用用户选择 */
+    -webkit-user-drag: none; /* 禁用图像拖动 */
+}
+
+.canvas-container {
+    position: relative; 
+    width: 700px;
 }
 
 .iconfont {
-    font-size: 16px;
+    font-size: 48px;
     color: #18c064;
 }
 

@@ -8,7 +8,7 @@ function cleanOutputDir() {
   return {
     name: 'clean-output-dir',
     buildStart() {
-      rmSync(resolve(__dirname, 'dist'), { recursive: true, force: true });
+      rmSync(resolve(__dirname, '../static'), { recursive: true, force: true });
     }
   };
 }
@@ -25,6 +25,7 @@ export default defineConfig({
     outDir: path.resolve(__dirname, '../static')
   },  
   server: {
+    host: '192.168.2.22',
     port: 3000,
     proxy: {
       '/removebg': {
