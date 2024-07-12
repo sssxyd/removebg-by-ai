@@ -38,7 +38,7 @@ const drawBoardRef = ref<InstanceType<typeof DrawRectCanvas> | null>(null);
 const fullImageRef = ref<HTMLCanvasElement | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const status = ref<EditorStatus>(EditorStatus.Ready);
-const editorSize = reactive<{width: number, height: number}>({width: 700, height: 500})
+const editorSize = reactive<{width: number, height: number}>({width: 800, height: 600})
 
 const syncCanvas = () => {
     if (displayImgRef.value) {
@@ -88,6 +88,9 @@ const drawImage = () => {
 const deleteImage = () => {
     imageBase64.value = null;
     status.value = EditorStatus.Ready;
+    if (drawBoardRef.value){
+        drawBoardRef.value.cancel();
+    }
     if (fullImageRef.value) {
         const canvas = fullImageRef.value;
         const ctx = canvas.getContext('2d');
@@ -96,6 +99,8 @@ const deleteImage = () => {
 }
 
 const rotateImage = () => {
+    if(isLoading.value) return;
+
     if (fullImageRef.value === null) {
         return;
     }
@@ -128,6 +133,8 @@ const clear = () => {
 }
 
 const removebg = () => {
+    if(isLoading.value) return;
+
     isLoading.value = true
     const polygonPoints = drawBoardRef.value?.confirm() || []
     const points:Array<Array<number>> = []
@@ -250,14 +257,14 @@ watch(status, (newStatus) => {
   
 <style lang="css" scoped>
 img {
-    width: 700px;
+    width: 800px;
     user-select: none; /* 禁用用户选择 */
     -webkit-user-drag: none; /* 禁用图像拖动 */
 }
 
 .canvas-container {
     position: relative; 
-    width: 700px;
+    width: 800px;
 }
 
 .iconfont {

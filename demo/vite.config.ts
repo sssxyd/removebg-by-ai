@@ -4,18 +4,18 @@ import * as path from 'path';
 import { resolve } from 'path';
 import { rmSync } from 'fs';
 
-function cleanOutputDir() {
-  return {
-    name: 'clean-output-dir',
-    buildStart() {
-      rmSync(resolve(__dirname, '../static'), { recursive: true, force: true });
-    }
-  };
-}
+// function cleanOutputDir() {
+//   return {
+//     name: 'clean-output-dir',
+//     buildStart() {
+//       rmSync(resolve(__dirname, '../static'), { recursive: true, force: true });
+//     }
+//   };
+// }
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), cleanOutputDir()],
+  plugins: [vue()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
