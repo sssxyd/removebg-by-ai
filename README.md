@@ -92,19 +92,44 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
   
 ## 使用示例
 
-```python
-import requests
+```
+http://localhost/removebg?url=https://xxx.com/xx.jpg
+```
 
-url = 'http://localhost:5000/removebg'
-data = {
-    'url': 'https://website.com/example.jpg',
-    'selectPolygon': [(10, 10), (10, 100), (100, 100), (100, 10)],
-    'responseFormat': 1
-}
+```ts
+    const payload = {
+        base64: imageBase64,
+        selectPolygon: [[100,100], [200,100], [100, 200], [200,200]],
+        editorSize: [400, 300],
+        responseFormat: 0
+    }
+    fetch('/removebg', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(resp => {
+        if(resp.status == 200){
+            resp.json().then(apiResult => {
+                if(apiResult.code != 0){
+                    alert(apiResult.msg)
+                }
+                else{
+                    responseImageBase64 = apiResult.result
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+        }
+        else{
+            console.error(resp.status + ":" + resp.statusText)
+        }
+    })
+    .catch(error => {
+        console.log(error)
+    })
+```
 
-response = requests.post(url, json=data)
-if response.headers['Content-Type'] == 'application/json':
-    result = response.json()
-else:
-    with open('output.png', 'wb') as f:
-        f.write(response.content)
+
