@@ -8,6 +8,13 @@
 
 RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行抠图，将该区域内的主要单一物体或人物扣取出来，去除背景的工具。该项目使用了 [RMBG-1.4 AI模型](https://huggingface.co/briaai/RMBG-1.4)。
 
+## 效果展示
+<p align="center">
+    <img src="example/1-上传图片.jpg" alt="上传图片" width="30%">
+    <img src="example/2-鼠标框选.jpg" alt="框选区域" width="30%">
+    <img src="example/3-抠图下载" alt="抠图效果" width="30%">
+</p>
+
 ## 功能特性
 
 - 自动识别并抠取指定区域内的主要物体/人物
