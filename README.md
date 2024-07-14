@@ -26,11 +26,11 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
 
 ### Windows用户
 
-1. 下载打包好的程序
-   百度网盘：https://pan.baidu.com/s/1feyn1JCC5iy5gi23Jt4haQ 提取码：1234
-3. 解压文件。
-4. 运行程序。
-5. 访问：http://localhost
+- 下载打包好的程序
+  - 百度网盘：https://pan.baidu.com/s/1feyn1JCC5iy5gi23Jt4haQ 提取码：1234
+- 解压文件。
+- 运行程序。
+- 访问：http://localhost
 
 端口号默认80，如需修改端，可编辑 `.env` 文件。
 
