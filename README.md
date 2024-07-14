@@ -12,7 +12,7 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
 <p align="center">
     <img src="example/1-上传图片.jpg" alt="上传图片" width="30%">
     <img src="example/2-鼠标框选.jpg" alt="框选区域" width="30%">
-    <img src="example/3-抠图下载" alt="抠图效果" width="30%">
+    <img src="example/3-抠图下载.jpg" alt="抠图效果" width="30%">
 </p>
 
 ## 功能特性
