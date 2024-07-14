@@ -1,9 +1,3 @@
-![4826BE5BC83D1F5C0DA28F6AE0BC26D4](https://github.com/user-attachments/assets/881bb27a-7570-4448-9511-b3c14aa6197b)# RemoveBG by AI
-
-[![GitHub stars](https://img.shields.io/github/stars/sssxyd/removebg-by-ai)](https://github.com/sssxyd/removebg-by-ai/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/sssxyd/removebg-by-ai)](https://github.com/sssxyd/removebg-by-ai/issues)
-[![GitHub license](https://img.shields.io/github/license/sssxyd/removebg-by-ai)](https://github.com/sssxyd/removebg-by-ai/blob/main/LICENSE)
-
 ## 项目简介
 
 RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行抠图，将该区域内的主要单一物体或人物扣取出来，去除背景的工具。该项目使用了 [RMBG-1.4 AI模型](https://huggingface.co/briaai/RMBG-1.4)。
