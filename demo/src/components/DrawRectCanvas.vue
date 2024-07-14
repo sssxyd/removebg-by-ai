@@ -123,6 +123,9 @@
     const height = Math.abs(endPoint.y - startPoint.y);
     const startX = Math.min(startPoint.x, endPoint.x);
     const startY = Math.min(startPoint.y, endPoint.y);
+    if (width == 0 || height == 0){
+      return []
+    }
     return [{x:startX, y:startY}, {x:startX + width, y: startY}, {x:startX + width, y:startY + height}, {x:startX, y:startY+height}]
   };
   
