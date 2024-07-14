@@ -38,7 +38,7 @@ const drawBoardRef = ref<InstanceType<typeof DrawRectCanvas> | null>(null);
 const fullImageRef = ref<HTMLCanvasElement | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const status = ref<EditorStatus>(EditorStatus.Ready);
-const editorSize = reactive<{width: number, height: number}>({width: 800, height: 600})
+const editorSize = reactive<{width: number, height: number}>({width: 600, height: 450})
 
 const syncCanvas = () => {
     if (displayImgRef.value) {
@@ -256,15 +256,19 @@ watch(status, (newStatus) => {
 </script>
   
 <style lang="css" scoped>
+.editor-container {
+    flex: 1;
+}
+
 img {
-    width: 800px;
+    width: 600px;
     user-select: none; /* 禁用用户选择 */
     -webkit-user-drag: none; /* 禁用图像拖动 */
 }
 
 .canvas-container {
     position: relative; 
-    width: 800px;
+    width: 600px;
 }
 
 .iconfont {
