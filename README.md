@@ -28,6 +28,7 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
 
 - 下载打包好的程序
   - 百度网盘：https://pan.baidu.com/s/1feyn1JCC5iy5gi23Jt4haQ 提取码：1234
+  - Google Drive: https://drive.google.com/file/d/1W6je8T4EFxXuEzbwxn7mcLu9JYQKoNmY/view?usp=sharing
 - 解压文件。
 - 运行程序。
 - 访问：http://localhost
