@@ -28,14 +28,21 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
 ### 源码编译
 
 1. 确保 Python 版本 >= 3.10。
-2. 克隆此仓库：
+2. 安装 Git LFS：
+
+    ```sh
+    git lfs install
+    ```
+
+3. 克隆此仓库并下载大文件：
 
     ```sh
     git clone https://github.com/sssxyd/removebg-by-ai.git
     cd removebg-by-ai
+    git lfs pull
     ```
 
-3. 创建虚拟环境并安装依赖：
+4. 创建虚拟环境并安装依赖：
 
     ```sh
     python -m venv venv
@@ -43,7 +50,7 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
     pip install -r requirements.txt
     ```
 
-4. 运行程序：
+5. 运行程序：
 
     ```sh
     python start.py
