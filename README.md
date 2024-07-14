@@ -1,4 +1,4 @@
-# RemoveBG by AI
+![4826BE5BC83D1F5C0DA28F6AE0BC26D4](https://github.com/user-attachments/assets/881bb27a-7570-4448-9511-b3c14aa6197b)# RemoveBG by AI
 
 [![GitHub stars](https://img.shields.io/github/stars/sssxyd/removebg-by-ai)](https://github.com/sssxyd/removebg-by-ai/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/sssxyd/removebg-by-ai)](https://github.com/sssxyd/removebg-by-ai/issues)
@@ -26,10 +26,11 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
 
 ### Windows用户
 
-1. 从[发布页面](https://github.com/sssxyd/removebg-by-ai/releases)下载最新的zip文件。
-2. 解压文件。
-3. 运行程序。
-4. 访问：http://localhost
+1. 下载打包好的程序
+   百度网盘：https://pan.baidu.com/s/1feyn1JCC5iy5gi23Jt4haQ 提取码：1234
+3. 解压文件。
+4. 运行程序。
+5. 访问：http://localhost
 
 端口号默认80，如需修改端，可编辑 `.env` 文件。
 
