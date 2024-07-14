@@ -29,8 +29,9 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
 1. 从[发布页面](https://github.com/sssxyd/removebg-by-ai/releases)下载最新的zip文件。
 2. 解压文件。
 3. 运行程序。
+4. 访问：http://localhost
 
-如需修改端口号，可编辑 `.env` 文件。
+端口号默认80，如需修改端，可编辑 `.env` 文件。
 
 ### 源码编译
 
