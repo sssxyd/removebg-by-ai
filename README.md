@@ -21,44 +21,42 @@ RemoveBG by AI 是一个利用AI模型对指定图片的指定矩形区域进行
 ### Windows用户
 
 - 下载打包好的程序
-  - 百度网盘：https://pan.baidu.com/s/1feyn1JCC5iy5gi23Jt4haQ 提取码：1234
-  - Google Drive: https://drive.google.com/file/d/1W6je8T4EFxXuEzbwxn7mcLu9JYQKoNmY/view?usp=sharing
+  - [百度网盘](https://pan.baidu.com/s/1feyn1JCC5iy5gi23Jt4haQ) 提取码：1234
+  - [Google Drive](https://drive.google.com/file/d/1W6je8T4EFxXuEzbwxn7mcLu9JYQKoNmY/view?usp=sharing)
 - 解压文件。
 - 运行程序。
 - 访问：http://localhost
 
-端口号默认80，如需修改端，可编辑 `.env` 文件。
+Windows程序的端口号80，如需修改端，可编辑 `.env` 文件。
 
 ### 源码编译
 
-1. 确保 Python 版本 >= 3.10。
-2. 安装 Git LFS：
-
-    ```sh
-    git lfs install
-    ```
-
-3. 克隆此仓库并下载大文件：
+1. 克隆此仓库：
 
     ```sh
     git clone https://github.com/sssxyd/removebg-by-ai.git
-    cd removebg-by-ai
-    git lfs pull
     ```
+2. 下载模型，因本账号的LFS配额用完，可从[RMBG-1.4](https://huggingface.co/briaai/RMBG-1.4)，或 [百度网盘](https://pan.baidu.com/s/1pexxJ-ziUvZLLFv7a_zDcQ)提取码1234, 下载模型文件覆盖到model目录
 
-4. 创建虚拟环境并安装依赖：
-
+3. 安装运行：
+    
     ```sh
+    # 确保python版本 >= 3.10
+    cd removebg-by-ai
     python -m venv venv
     source venv/bin/activate  # Windows 用户使用 `venv\Scripts\activate`
     pip install -r requirements.txt
+   
+   python start.py
     ```
-
-5. 运行程序：
+    或者使用docker安装
 
     ```sh
-    python start.py
-    ```
+   cd removebg-by-ai
+   docker build -t sssxyd/rmbgapi .
+   docker run -d -p 80:10086 sssxyd/rmbgapi
+   ```
+
 
 ## API接口
 
