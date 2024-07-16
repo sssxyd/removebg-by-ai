@@ -7,6 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua
 
 COPY . .
 
-EXPOSE 80
+EXPOSE 10086
 
 CMD ["python", "start.py"]
