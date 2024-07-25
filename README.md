@@ -57,7 +57,25 @@ Windows程序的端口号80，如需修改端，可编辑 `.env` 文件。
    docker run -d -p 80:10086 sssxyd/rmbgapi
    ```
 
+### Command Line:
+1. Compile from source code
+    ```sh
+    pyinstaller --onefile --name=removebg --icon=favicon.ico .\command.py
+    ```
+    **Please ensure that the packaged executable file and the model directory are in the same directory.**
 
+
+2. Download Windows executable file  
+    - [Google Drive](https://drive.google.com/file/d/1lFvR74Br1EZP4zO9oWCekC6B3O6LEg2t/view?usp=sharing)
+
+
+3. Usage
+    ```
+    Usage: removebg SRC_IMAGE_PATH TARGET_IMAGE_PATH
+    or:    removebg SRC_IMAGE_URL TARGET_IMAGE_PATH
+    Options Supported:
+            --rect=rectangle      optional, selected rectangle: x,y,width,height   
+   ```
 ## API接口
 
 ### /removebg
