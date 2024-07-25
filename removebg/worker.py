@@ -13,10 +13,12 @@ from torchvision.transforms.functional import normalize
 from transformers import AutoModelForImageSegmentation
 
 from .dto import RemoveBgDTO
+from .func import get_executable_directory
 from .logger import get_logger
 
-model = AutoModelForImageSegmentation.from_pretrained(os.path.join(os.getcwd(), 'model', 'briaai', 'RMBG-1.4'),
-                                                      trust_remote_code=True)
+root_dir = get_executable_directory()
+model_dir = os.path.join(root_dir, 'model', 'briaai', 'RMBG-1.4')
+model = AutoModelForImageSegmentation.from_pretrained(model_dir, trust_remote_code=True)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 

@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 
 from pydantic import BaseModel
 
+from .func import resolve_path
 from .logger import get_logger
 
 
@@ -18,7 +19,7 @@ class RemoveBgDTO(BaseModel):
         if not self.path and not self.url and not self.base64:
             return 100, 'One of the path/url/base64 parameters must have a value'
         if self.path:
-            absolute_path = os.path.join(os.getcwd(), self.path)
+            absolute_path = resolve_path(self.path)
             if not os.path.exists(absolute_path) or not os.path.isfile(absolute_path):
                 return 110, f"path: {self.path} not exist or it is not file!"
         elif self.url:

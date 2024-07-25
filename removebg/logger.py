@@ -1,6 +1,7 @@
 import logging
 import os
 from enum import Enum
+from .func import get_executable_directory
 
 
 class LogLevel(Enum):
@@ -36,7 +37,7 @@ def get_log_level(level: str) -> int:
 
 
 def get_logger(name: str, level: LogLevel = LogLevel.UNSET, file_name: str = 'app') -> logging.Logger:
-    log_dir = os.path.join(os.getcwd(), 'logs')
+    log_dir = os.path.join(get_executable_directory(), 'logs')
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
     log_file_path = os.path.join(log_dir, f"{file_name}.log")
