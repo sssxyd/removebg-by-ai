@@ -176,12 +176,12 @@ def _save_image_with_random_filename(img: Image.Image) -> str:
     return filepath
 
 
-def process(dto: RemoveBgDTO) -> (int, str, bytes | str):
+def process(dto: RemoveBgDTO) -> tuple[int, str, bytes | str]:
     code, msg = dto.check()
     if code != 0:
         return code, msg, ''
 
-    orig_im: Image | str = _read_image(dto)
+    orig_im: Image.Image | str = _read_image(dto)
     if isinstance(orig_im, str):
         return 200, orig_im, ''
     crop_im = _crop_image_polygon_area(dto, orig_im)
