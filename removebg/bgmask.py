@@ -1,10 +1,11 @@
 
 import os
+import time
 import cv2
 import numpy as np
-from regex import F
+import torch.nn.functional as F
 import torch
-from removebg.func import get_executable_directory
+from .func import get_executable_directory
 from transformers import AutoModelForImageSegmentation
 
 def _load_model() -> AutoModelForImageSegmentation:
@@ -73,6 +74,7 @@ def _tensor_to_images(output_tensor: torch.Tensor, original_sizes: list[tuple]) 
         
         # 获取对应的原始尺寸
         original_size = original_sizes[i]
+
         
         # 调整尺寸到原始大小
         resized_tensor = F.interpolate(single_tensor.unsqueeze(0), size=original_size, mode='bilinear')
@@ -86,46 +88,57 @@ def _tensor_to_images(output_tensor: torch.Tensor, original_sizes: list[tuple]) 
         # 转换为 NumPy 数组并调整为 (height, width, channels)
         image_array = (normalized_tensor * 255).permute(1, 2, 0).cpu().data.numpy().astype(np.uint8)
         
-        # 如果是单通道图像，去掉多余的维度
-        image_array = np.squeeze(image_array)
-
-        # 转换为 BGRA 格式
-        if image_array.shape[-1] == 3:  # 如果是 RGB 格式
-            image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGRA)
-        elif image_array.shape[-1] == 1:  # 如果是灰度图
-            image_array = cv2.cvtColor(image_array, cv2.COLOR_GRAY2BGRA)
-        
-        # 设置 Alpha 通道：假设模型输出的背景部分为 0，前景部分为 1
-        alpha_channel = normalized_tensor[0].cpu().data.numpy() * 255  # 使用第一个通道作为 Alpha 通道
-        alpha_channel = alpha_channel.astype(np.uint8)
-        image_array[:, :, 3] = alpha_channel  # 替换 Alpha 通道        
-        
         # 添加到结果列表
         images.append(image_array)
     return images  
 
-class ImageHandler:
+def _extract_max_area_connected_component(input_mask: cv2.Mat) -> cv2.Mat:
+    """
+    将输入的mask中除了最大的目标区域外的其他区域置为0
+    :param input_mask: 输入的mask，形状为 (H, W, 1)
+    :return: 处理后的mask，保留最大连续区域
+    """
+    # 查找所有连通域
+    num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(input_mask, connectivity=8)
+
+    # 如果没有连通域，直接返回全零的mask
+    if num_labels <= 1:
+        return np.zeros_like(input_mask, dtype=np.uint8)
+    
+    if num_labels == 2:
+        # 只有一个连通域（背景和前景），直接返回前景
+        return input_mask
+
+    # 找到面积最大的连通域（排除背景，背景的label为0）
+    largest_label = 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA])
+
+    # 创建一个新的mask，仅保留最大连通域
+    output_mask = np.zeros_like(input_mask, dtype=np.uint8)
+    output_mask[labels == largest_label] = 255
+
+    return output_mask
+
+class BackGroundMaskSeparator:
+    """
+    背景遮罩分离器
+    """
     def __init__(self):
         self.model = _load_model()
-    
-    def _tensor_to_image(self, tensor_ret: torch.Tensor, im_size: list) -> np.ndarray:
-        tensor_ret = torch.squeeze(F.interpolate(tensor_ret, size=im_size, mode='bilinear'), 0)
-        ma = torch.max(tensor_ret)
-        mi = torch.min(tensor_ret)
-        tensor_ret = (tensor_ret - mi) / (ma - mi)
-        im_array = (tensor_ret * 255).permute(1, 2, 0).cpu().data.numpy().astype(np.uint8)
-        im_array = np.squeeze(im_array)
-        return im_array    
 
     # 将图片的背景去除
-    def remove_background(self, input_images: list[cv2.Mat]) -> list[cv2.Mat]:
-        input_tensor, image_size = _images_to_tensor([input_images], [1024, 1024])
+    def calc_mask(self, input_images: list[cv2.Mat]) -> list[cv2.Mat]:
+        start_time = time.time()
+        input_tensor, image_size = _images_to_tensor(input_images, [1024, 1024])
         # 进行推理
-        output_tensor = self.model(input_tensor)
+        results = self.model(input_tensor)
+        output_tensor = results[0][0]
         # 解析输出张量为图片
-        return _tensor_to_images(output_tensor, image_size)
+        masks = _tensor_to_images(output_tensor, image_size)
+        results = []
+        for mask in masks:
+            results.append(_extract_max_area_connected_component(mask))
+        end_time = time.time()
+        print(f"calc_mask time: {end_time - start_time:.2f} seconds")
+        return results
     
-    # 对source图片中的target目标区域，添加光照效果
-    def light_sweeps_past(self, source: cv2.Mat, target: cv2.Mat) -> cv2.Mat:
-        return source
     

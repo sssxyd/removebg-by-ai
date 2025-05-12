@@ -1,7 +1,13 @@
+import base64
 import os.path
 from urllib.parse import urlparse
 
+import cv2
+import numpy as np
 from pydantic import BaseModel
+import requests
+
+from removebg import utils
 
 from .func import resolve_path
 from .logger import get_logger
@@ -29,4 +35,5 @@ class RemoveBgDTO(BaseModel):
                 get_logger('removebg').exception(msg="RemoveBgDTO check failed", exc_info=e)
                 return 120, f"url: {self.url} is not valid url!"
         return 0, "OK"
+    
 
