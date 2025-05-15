@@ -25,7 +25,7 @@ export default defineConfig({
     outDir: path.resolve(__dirname, '../static')
   },  
   server: {
-    host: '192.168.2.22',
+    host: 'localhost',
     port: 3000,
     proxy: {
       '/removebg': {
